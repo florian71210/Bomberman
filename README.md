@@ -1,10 +1,12 @@
 # BOMBERMAN
+
 > Bomberman Like
+
 ## Fonctionnalités à développer
 
 - [ ] Le terrain
-- [ ] Les obstacles ( fix ou aléatoire)
-- [ ] Le joueur (déplacement flèches directionnelles)
+- [x] Les obstacles ( fix ou aléatoire)
+- [x] Le joueur (déplacement flèches directionnelles)
 - [ ] Ennemis (déplacement aléatoire)
-- [ ] Bombe
-- [ ] Collisions (obstacles, joueur, ennemis, bombe)
+- [x] Bombe
+- [x] Collisions (obstacles, joueur, ennemis, bombe)

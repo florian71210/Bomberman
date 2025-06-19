@@ -4,7 +4,7 @@ body {
   }
   
   #game-area {
-    width: 600px;  /* 15 * 40px = 520px */
+    width: 600px;  /* 25 * 24px = 800px */
     height: 600px;
     position: relative;
     margin: 20px auto;
@@ -16,33 +16,31 @@ body {
       /* Grille horizontale */
       linear-gradient(to bottom, black 1px, transparent 1px);
     
-    background-size: 40px 40px; /* taille de chaque case */
+    background-size: 24px 24px; /* taille de chaque case */
     background-repeat: repeat;
     overflow: hidden;
   }
 
   #player1 {
-    width: 40px;
-    height: 40px;
-    /*background-color: blue;*/
-    background: url("images/Creeper--removebg-preview.png") center;
-    background-size: cover;
+    width: 24px;
+    height: 24px;
+    background-color: blue;
     position: absolute;
     border-radius: 50%;
     z-index: 1;
   }
   
   .bomb {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     background: url("images/tnt.jpg") center;
     background-size: cover;
     position: absolute;
   }
   
   .explosion {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     background: url("images/tnt.jpg") center;
     background-size: cover;
     position: absolute;
@@ -51,8 +49,8 @@ body {
   }
 
   .block-breakable {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     background: url("images/diamond.jpg") center;
     background-size: cover;
     position: absolute;
@@ -62,7 +60,25 @@ body {
     background: url("images/bedrock.png") center;
     background-size: cover;
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .enemy {
+    z-index: 1;
+    background: url("images/Creeper.png") center;
+    background-size: cover;
+  }
+  
+  .message {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: none;
   }
   
