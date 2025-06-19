@@ -1,0 +1,68 @@
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #game-area {
+    width: 600px;  /* 15 * 40px = 520px */
+    height: 600px;
+    position: relative;
+    margin: 20px auto;
+    background-color: #ddd;
+  
+    /* Grille verticale */
+    background-image:
+      linear-gradient(to right, black 1px, transparent 1px),
+      /* Grille horizontale */
+      linear-gradient(to bottom, black 1px, transparent 1px);
+    
+    background-size: 40px 40px; /* taille de chaque case */
+    background-repeat: repeat;
+    overflow: hidden;
+  }
+
+  #player1 {
+    width: 40px;
+    height: 40px;
+    /*background-color: blue;*/
+    background: url("images/Creeper--removebg-preview.png") center;
+    background-size: cover;
+    position: absolute;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  .bomb {
+    width: 40px;
+    height: 40px;
+    background: url("images/tnt.jpg") center;
+    background-size: cover;
+    position: absolute;
+  }
+  
+  .explosion {
+    width: 40px;
+    height: 40px;
+    background: url("images/tnt.jpg") center;
+    background-size: cover;
+    position: absolute;
+    opacity: 0.8;
+    z-index: 1;
+  }
+
+  .block-breakable {
+    width: 40px;
+    height: 40px;
+    background: url("images/diamond.jpg") center;
+    background-size: cover;
+    position: absolute;
+  }  
+
+  .block-indestructible{
+    background: url("images/bedrock.png") center;
+    background-size: cover;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+  }
+  
