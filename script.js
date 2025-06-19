@@ -61,7 +61,14 @@ function explode(x, y) {
         }, 2000);
 
       }
-    });
+      });
+
+      const playerX = parseInt(player.style.left);
+      const playerY = parseInt(player.style.top);
+      if (playerX === explosionX && playerY === explosionY) {
+        afficherMessage("💀 Tu as été touché !");
+        // Ici tu peux ajouter la gestion de la "mort" ou fin de jeu
+      }
 
     setTimeout(() => {
       explosion.remove();
@@ -203,4 +210,14 @@ function isOccupied(x, y) {
   }
 
   return false; // Rien sur cette case
+}
+
+function afficherMessage(msg) {
+  const message = document.getElementById("message");
+  message.textContent = msg;
+  message.style.display = "block";
+
+  setTimeout(() => {
+    message.style.display = "none";
+  }, 2000);
 }

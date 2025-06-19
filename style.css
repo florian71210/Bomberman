@@ -70,7 +70,7 @@ body {
     background-size: cover;
   }
   
-  .message {
+  #message {
     position: absolute;
     top: 10px;
     left: 10px;
