@@ -63,11 +63,16 @@ function explode(x, y) {
       }
       });
 
+      // Vérifier si le joueur est touché
       const playerX = parseInt(player.style.left);
       const playerY = parseInt(player.style.top);
       if (playerX === explosionX && playerY === explosionY) {
-        afficherMessage("💀 Tu as été touché !");
-        // Ici tu peux ajouter la gestion de la "mort" ou fin de jeu
+        afficherMessage("💀 Tu as été touché ! Rechargement...");
+        
+        // Recommencer la partie après un court délai
+        setTimeout(() => {
+          location.reload(); // recharge la page
+        }, 2000); // 2 secondes pour voir le message
       }
 
     setTimeout(() => {
@@ -100,6 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
     return true;
   }
 
+  //Mouvement
   window.addEventListener("keydown", (e) => {
     let left = parseInt(player.style.left);
     let top = parseInt(player.style.top);

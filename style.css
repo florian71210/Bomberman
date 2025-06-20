@@ -51,7 +51,7 @@ body {
   .block-breakable {
     width: 24px;
     height: 24px;
-    background: url("images/diamond.jpg") center;
+    background: url("images/diamond.png") center;
     background-size: cover;
     position: absolute;
   }  
