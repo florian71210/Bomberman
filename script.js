@@ -75,6 +75,12 @@ function explode(x, y) {
         }, 2000); // 2 secondes pour voir le message
       }
 
+      // 💥 Vérifie si le joueur est touché
+      if (playerX === explosionX && playerY === explosionY) {
+        gameOver("💥 Tu as été touché par une bombe !");
+      }
+
+
     setTimeout(() => {
       explosion.remove();
     }, 500);
@@ -88,10 +94,71 @@ window.addEventListener("DOMContentLoaded", () => {
   player.style.top = "0px";
 
   // Ensuite, un ennemi toutes les 30 secondes (30000 ms)
-  setInterval(spawnEnemy, 30000);
+  setInterval(spawnEnemy, 3000);
 
   generateBlocks();
   spawnEnemy(); // premier ennemi au début
+
+  let dangerTimeout = null;
+let proximityDuration = 3000; // temps en ms (3 secondes)
+
+// Vérification toutes les 200ms si le joueur est proche d’un ennemi
+setInterval(() => {
+  const playerX = parseInt(player.style.left);
+  const playerY = parseInt(player.style.top);
+
+  const enemies = document.querySelectorAll(".enemy");
+
+  let isNear = false;
+
+  enemies.forEach(enemy => {
+    const enemyX = parseInt(enemy.style.left);
+    const enemyY = parseInt(enemy.style.top);
+
+    const dx = Math.abs(playerX - enemyX);
+    const dy = Math.abs(playerY - enemyY);
+
+    // Le joueur est adjacent (une case autour)
+    if ((dx === cellSize && dy === 0) || (dy === cellSize && dx === 0)) {
+      isNear = true;
+    }
+  });
+
+    // Si proche d’un ennemi : démarrer le compte à rebours
+    if (isNear && !dangerTimeout) {
+      dangerTimeout = setTimeout(() => {
+        // 🔁 Vérification encore une fois avant déclenchement
+        const currentPlayerX = parseInt(player.style.left);
+        const currentPlayerY = parseInt(player.style.top);
+        let stillNear = false;
+  
+        document.querySelectorAll(".enemy").forEach(enemy => {
+          const enemyX = parseInt(enemy.style.left);
+          const enemyY = parseInt(enemy.style.top);
+  
+          const dx = Math.abs(enemyX - currentPlayerX);
+          const dy = Math.abs(enemyY - currentPlayerY);
+  
+          if ((dx === cellSize && dy === 0) || (dy === cellSize && dx === 0)) {
+            stillNear = true;
+          }
+        });
+  
+        if (stillNear) {
+          gameOver("💥 Tu es resté trop proche d’un ennemi !");
+        }
+  
+        dangerTimeout = null;
+      }, proximityDuration);
+    }
+  
+    // Si plus proche, on annule le danger
+    if (!isNear && dangerTimeout) {
+      clearTimeout(dangerTimeout);
+      dangerTimeout = null;
+    }
+  
+  }, 200);
 
   function canMove(newX, newY) {
     const blocks = document.querySelectorAll(".block-indestructible, .block-breakable");
@@ -111,22 +178,22 @@ window.addEventListener("DOMContentLoaded", () => {
     let top = parseInt(player.style.top);
 
     switch (e.keyCode) {
-      case 37:
+      case 37: //Gauche
         if (left > 0 && canMove(left - cellSize, top)) {
           player.style.left = (left - cellSize) + "px";
         }
         break;
-      case 39:
+      case 39: //Droite
         if (left < maxPos && canMove(left + cellSize, top)) {
           player.style.left = (left + cellSize) + "px";
         }
         break;
-      case 38:
+      case 38: //Haut
         if (top > 0 && canMove(left, top - cellSize)) {
           player.style.top = (top - cellSize) + "px";
         }
         break;
-      case 40:
+      case 40: //Bas
         if (top < maxPos && canMove(left, top + cellSize)) {
           player.style.top = (top + cellSize) + "px";
         }
@@ -143,6 +210,8 @@ window.addEventListener("DOMContentLoaded", () => {
           explode(parseInt(bomb.style.left), parseInt(bomb.style.top));
         }, 2000);
         break;
+
+    
     }
   });
 });
@@ -226,4 +295,15 @@ function afficherMessage(msg) {
   setTimeout(() => {
     message.style.display = "none";
   }, 2000);
+}
+
+function gameOver(message) {
+  const msgDiv = document.getElementById("game-message");
+  msgDiv.textContent = message;
+  msgDiv.classList.remove("hidden");
+
+  // Recharger la partie après 3 secondes
+  setTimeout(() => {
+    location.reload();
+  }, 3000);
 }

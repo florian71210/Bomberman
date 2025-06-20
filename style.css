@@ -1,6 +1,8 @@
 body {
     margin: 0;
     padding: 0;
+    background: url("images/background_diamond.jpeg") no-repeat;
+    background-size: cover;
   }
   
   #game-area {
@@ -24,7 +26,9 @@ body {
   #player1 {
     width: 24px;
     height: 24px;
-    background-color: blue;
+    background: url("images/steve.png") center;
+    background-size: contain;
+    background-repeat: no-repeat;
     position: absolute;
     border-radius: 50%;
     z-index: 1;
@@ -79,6 +83,24 @@ body {
     padding: 10px;
     border-radius: 5px;
     font-weight: bold;
+    display: none;
+  }
+  
+  #game-message {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 30px 60px;
+    font-size: 26px;
+    border-radius: 12px;
+    z-index: 999;
+    text-align: center;
+  }
+  
+  .hidden {
     display: none;
   }
   
