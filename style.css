@@ -3,6 +3,7 @@ body {
     padding: 0;
     background: url("images/background_diamond.jpeg") no-repeat;
     background-size: cover;
+    overflow: hidden;
   }
   
   #game-area {
@@ -104,3 +105,8 @@ body {
     display: none;
   }
   
+  h1,h2 {
+    color: white;
+    display: flex;
+    justify-content: center;
+  }

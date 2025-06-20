@@ -2,6 +2,7 @@ const gridSize = 25;
 const cellSize = 24; // taille d'une case en pixels
 const maxPos = (gridSize - 1) * cellSize;
 
+//Gestion de la safe zone
 const safeZones = [
   "0-0", "1-0",
   "0-1", "1-1"
@@ -10,7 +11,10 @@ const safeZones = [
 const gameArea = document.querySelector("#game-area");
 const player = document.getElementById("player1");
 
-// Fonction explode déclarée ici, accessible globalement
+let ennemisTues = 0;
+const scoreCible = 5;
+
+//Gestion de l'explosion
 function explode(x, y) {
   const directions = [
     { dx: 0, dy: 0 },
@@ -24,7 +28,6 @@ function explode(x, y) {
     const explosionX = x + dir.dx * cellSize;
     const explosionY = y + dir.dy * cellSize;
 
-    // Crée l’effet visuel
     const explosion = document.createElement("div");
     explosion.classList.add("explosion");
     explosion.style.left = explosionX + "px";
@@ -34,7 +37,6 @@ function explode(x, y) {
     explosion.style.height = cellSize + "px";
     gameArea.appendChild(explosion);
 
-    // 💥 Supprimer les blocs cassables
     document.querySelectorAll(".block-breakable").forEach(block => {
       const blockX = parseInt(block.style.left);
       const blockY = parseInt(block.style.top);
@@ -43,123 +45,110 @@ function explode(x, y) {
       }
     });
 
-    // 💣 Vérifie si un ennemi est touché
     document.querySelectorAll(".enemy").forEach(enemy => {
       const enemyX = parseInt(enemy.style.left);
       const enemyY = parseInt(enemy.style.top);
 
       if (enemyX === explosionX && enemyY === explosionY) {
         enemy.remove();
-
-        //Afficher un message
+        ennemisTues++;
+        //Affiche un message quand un monstre est éliminée
         const msg = document.getElementById("message");
-        msg.textContent = "✅ Ennemi éliminé !";
+        msg.textContent = `✅ Ennemi éliminé (${ennemisTues}/${scoreCible})`;
         msg.style.display = "block";
 
         setTimeout(() => {
           msg.style.display = "none";
         }, 2000);
 
+        if (ennemisTues >= scoreCible) {
+          victoire();
+        }
       }
-      });
-
-      // Vérifier si le joueur est touché
-      const playerX = parseInt(player.style.left);
-      const playerY = parseInt(player.style.top);
-      if (playerX === explosionX && playerY === explosionY) {
-        afficherMessage("💀 Tu as été touché ! Rechargement...");
-        
-        // Recommencer la partie après un court délai
-        setTimeout(() => {
-          location.reload(); // recharge la page
-        }, 2000); // 2 secondes pour voir le message
-      }
-
-      // 💥 Vérifie si le joueur est touché
-      if (playerX === explosionX && playerY === explosionY) {
-        gameOver("💥 Tu as été touché par une bombe !");
-      }
-
+    });
+    //Affiche un message quand l'explosion touche le player1
+    const playerX = parseInt(player.style.left);
+    const playerY = parseInt(player.style.top);
+    if (playerX === explosionX && playerY === explosionY) {
+      gameOver("💥 Tu as été touché par une bombe !");
+    }
 
     setTimeout(() => {
       explosion.remove();
     }, 500);
   });
 }
+//Affiche un message quand on gagne
+function victoire() {
+  const message = document.getElementById("game-message");
+  message.textContent = "🎉 Bravo ! Tu as gagné !";
+  message.classList.remove("hidden");
 
+  setTimeout(() => {
+    location.reload();
+  }, 4000);
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   player.style.position = "absolute";
   player.style.left = "0px";
   player.style.top = "0px";
 
-  // Ensuite, un ennemi toutes les 30 secondes (30000 ms)
   setInterval(spawnEnemy, 3000);
 
   generateBlocks();
-  spawnEnemy(); // premier ennemi au début
+  spawnEnemy();
 
   let dangerTimeout = null;
-let proximityDuration = 3000; // temps en ms (3 secondes)
+  let proximityDuration = 3000;
 
-// Vérification toutes les 200ms si le joueur est proche d’un ennemi
-setInterval(() => {
-  const playerX = parseInt(player.style.left);
-  const playerY = parseInt(player.style.top);
+  setInterval(() => {
+    const playerX = parseInt(player.style.left);
+    const playerY = parseInt(player.style.top);
+    const enemies = document.querySelectorAll(".enemy");
 
-  const enemies = document.querySelectorAll(".enemy");
+    let isNear = false;
 
-  let isNear = false;
-
-  enemies.forEach(enemy => {
-    const enemyX = parseInt(enemy.style.left);
-    const enemyY = parseInt(enemy.style.top);
-
-    const dx = Math.abs(playerX - enemyX);
-    const dy = Math.abs(playerY - enemyY);
-
-    // Le joueur est adjacent (une case autour)
-    if ((dx === cellSize && dy === 0) || (dy === cellSize && dx === 0)) {
-      isNear = true;
-    }
-  });
-
-    // Si proche d’un ennemi : démarrer le compte à rebours
+    enemies.forEach(enemy => {
+      const enemyX = parseInt(enemy.style.left);
+      const enemyY = parseInt(enemy.style.top);
+      const dx = Math.abs(playerX - enemyX);
+      const dy = Math.abs(playerY - enemyY);
+      if ((dx === cellSize && dy === 0) || (dy === cellSize && dx === 0)) {
+        isNear = true;
+      }
+    });
+    //Gère quand on reste proche d'un ennemi
     if (isNear && !dangerTimeout) {
       dangerTimeout = setTimeout(() => {
-        // 🔁 Vérification encore une fois avant déclenchement
         const currentPlayerX = parseInt(player.style.left);
         const currentPlayerY = parseInt(player.style.top);
         let stillNear = false;
-  
+
         document.querySelectorAll(".enemy").forEach(enemy => {
           const enemyX = parseInt(enemy.style.left);
           const enemyY = parseInt(enemy.style.top);
-  
           const dx = Math.abs(enemyX - currentPlayerX);
           const dy = Math.abs(enemyY - currentPlayerY);
-  
           if ((dx === cellSize && dy === 0) || (dy === cellSize && dx === 0)) {
             stillNear = true;
           }
         });
-  
+
         if (stillNear) {
           gameOver("💥 Tu es resté trop proche d’un ennemi !");
         }
-  
+
         dangerTimeout = null;
       }, proximityDuration);
     }
-  
-    // Si plus proche, on annule le danger
+
     if (!isNear && dangerTimeout) {
       clearTimeout(dangerTimeout);
       dangerTimeout = null;
     }
-  
   }, 200);
-
+//Gestion des collissions pour les blocs cassables et incassables
   function canMove(newX, newY) {
     const blocks = document.querySelectorAll(".block-indestructible, .block-breakable");
     for (let block of blocks) {
@@ -171,34 +160,33 @@ setInterval(() => {
     }
     return true;
   }
-
-  //Mouvement
+//Gestion des mouvements
   window.addEventListener("keydown", (e) => {
     let left = parseInt(player.style.left);
     let top = parseInt(player.style.top);
 
     switch (e.keyCode) {
-      case 37: //Gauche
+      case 37:
         if (left > 0 && canMove(left - cellSize, top)) {
           player.style.left = (left - cellSize) + "px";
         }
         break;
-      case 39: //Droite
+      case 39:
         if (left < maxPos && canMove(left + cellSize, top)) {
           player.style.left = (left + cellSize) + "px";
         }
         break;
-      case 38: //Haut
+      case 38:
         if (top > 0 && canMove(left, top - cellSize)) {
           player.style.top = (top - cellSize) + "px";
         }
         break;
-      case 40: //Bas
+      case 40:
         if (top < maxPos && canMove(left, top + cellSize)) {
           player.style.top = (top + cellSize) + "px";
         }
         break;
-      case 32: // espace
+      case 32:
         const bomb = document.createElement("div");
         bomb.classList.add("bomb");
         bomb.style.left = player.style.left;
@@ -210,13 +198,10 @@ setInterval(() => {
           explode(parseInt(bomb.style.left), parseInt(bomb.style.top));
         }, 2000);
         break;
-
-    
     }
   });
 });
-
-//Générer des blocs aléatoire
+//Gestion des spwans des blocs cassables et incassables
 function generateBlocks() {
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
@@ -226,9 +211,9 @@ function generateBlocks() {
       const rand = Math.random();
       let blockType = null;
       if (rand < 0.3) {
-        blockType = "block-indestructible"; // 30% des blocs sont incassables
+        blockType = "block-indestructible";
       } else if (rand < 0.7) {
-        blockType = "block-breakable"; // 70% des blocs sont cassables
+        blockType = "block-breakable";
       }
 
       if (blockType) {
@@ -241,20 +226,18 @@ function generateBlocks() {
     }
   }
 }
-
+//Spwan des ennemies
 let enemyCount = 0;
 
-//Générer le spawn des ennemies
 function spawnEnemy() {
   let x, y, key;
-
   let attempts = 0;
   do {
     x = Math.floor(Math.random() * gridSize);
     y = Math.floor(Math.random() * gridSize);
     key = `${x}-${y}`;
     attempts++;
-    if (attempts > 100) return; // éviter boucle infinie
+    if (attempts > 100) return;
   } while (safeZones.includes(key) || isOccupied(x, y));
 
   const enemy = document.createElement("div");
@@ -269,8 +252,7 @@ function spawnEnemy() {
 
   enemyCount++;
 }
-
-//Vérifier le spawn des ennemies 
+//Gestion des spawn des ennemies pour qu'il ne spawn pas sur des blocs occupés
 function isOccupied(x, y) {
   const objects = document.querySelectorAll(".block-indestructible, .block-breakable, .enemy");
   const posX = x * cellSize;
@@ -280,13 +262,13 @@ function isOccupied(x, y) {
     const objX = parseInt(obj.style.left);
     const objY = parseInt(obj.style.top);
     if (objX === posX && objY === posY) {
-      return true; // Cette case est déjà prise
+      return true;
     }
   }
 
-  return false; // Rien sur cette case
+  return false;
 }
-
+//Afficher des messages
 function afficherMessage(msg) {
   const message = document.getElementById("message");
   message.textContent = msg;
@@ -302,7 +284,6 @@ function gameOver(message) {
   msgDiv.textContent = message;
   msgDiv.classList.remove("hidden");
 
-  // Recharger la partie après 3 secondes
   setTimeout(() => {
     location.reload();
   }, 3000);
